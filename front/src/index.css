@@ -1,0 +1,498 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+
+@font-face {
+  font-family: "ZenTokyoZoo-Regular.ttf";
+  src: url("./fonts/ZenTokyoZoo-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Khmer UI.ttf";
+  src: url('./fonts/Khmer UI.ttf');
+}
+.shapkalogo{
+  font-family: "ZenTokyoZoo-Regular.ttf";
+  color: #FAF0F0;
+  font-size: 200%;
+  margin-top: 0.5%;
+  margin-bottom: 0%;
+  margin-right: 1%;
+}
+
+.undershapka{
+  position: relative;
+  text-align: right;
+  background-image: url('../src/img/Undershapka.png');
+  background-size: cover;
+  height: 80vh;
+
+}
+
+.sale{
+  width: 28%;
+  text-align: left;
+}
+.txt{
+  font-family: 'Khmer UI.ttf';
+  font-size: 300%;
+  font-weight: bold;
+  color: #730019;
+  display: block;
+  padding-top: 20%;
+  padding-bottom: 3%;
+  padding-right: 2%;
+}
+
+.regbut {
+    border-radius: 26%;
+    color: #F9E3E1;
+    padding: 2% 4%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flexblock;
+    font-size: 150%;
+    margin-right: 40%;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    background-color: #F9E3E1;
+    color: #730019;
+    border: 2px solid #9A1656;
+    justify-content: center;
+}
+.regbut:hover {
+  background-color: #9A1656;
+  color: #F9E3E1;
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.vigoda{
+  position: relative;
+  font-family: 'Khmer UI.ttf';
+  font-size: 30px;
+  text-align: center;
+  margin: 3%;
+}
+
+#cards {
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  width: 19rem;
+  background-color: #9A1656;
+  margin-top: 1%;  
+  margin-right: 5% ; 
+  margin-left: 5% ; 
+  margin-bottom: 3% ; 
+  border-radius: 63px;
+}
+#cards1 {
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  width: 55%;
+  background-color: #F0DAE1;
+  margin: auto;
+  margin-top: 7%;
+  margin-bottom: 7%; 
+  border-radius: 63px;
+  display: flex;
+  padding: 2%;
+}
+
+
+#cards .buket1{
+  border-radius: 63px;
+  border: 10px solid #9A1656;
+}
+#cards1 .buket1{
+  border-radius: 80px;
+  border: 10px solid #F0DAE1;
+  margin: 3%;
+  margin-right: 6%;
+  margin-left: 6%;
+  display: inline-block;
+  width: 100%;
+}
+#cards .bukettitle{
+  color: white;
+  text-align: center;
+  margin-top: 3%;
+  margin-bottom: 10%;
+  font-family: 'Khmer UI.ttf';
+  font-size: 23px ;
+}
+#cards1 .bukettitle{
+  color: #9A1656;
+  text-align: center;
+  margin-top: 7%;
+  margin-bottom: 10%;
+  font-family: 'Khmer UI.ttf';
+  font-size: 32px;
+  display: inline-block;
+}
+#cards1 .opisanie{
+  color: #9A1656;
+  text-align: justify;
+  margin-top: 2%;
+  font-family: 'Khmer UI.ttf';
+  font-size: 27px;
+  display: inline-block;
+  font-weight: bold;
+}
+#cards1 .desc{
+  color: #9A1656;
+  text-align: justify;
+  margin-top: 2%;
+  font-family: 'Khmer UI.ttf';
+  font-size: 25px;
+  display: inline-block;
+  font-weight: 500 ;
+  margin-bottom: 7%;
+  text-justify: inter-word;
+  word-spacing: normal;
+}
+#cards .new{
+  position: relative;
+  font-family: 'Khmer UI.ttf';
+  font-weight: 300;
+  font-size: 170%;
+  color: #9A1656;
+  margin: 0;
+
+}
+#cards .last{
+  position: relative;
+  font-family: 'Khmer UI.ttf';
+  font-weight: 300;
+  font-size: 120%;
+  line-height: 55px;
+  color: #9A1656;
+  text-decoration: line-through;
+  text-decoration-color: #9A1656;
+  margin: 0;
+}
+
+#cards1 .new{
+  position: relative;
+  font-family: 'Khmer UI.ttf';
+  font-weight: 300;
+  font-size: 190%;
+  color: #9A1656;
+  margin: 0;
+
+}
+#cards1 .last{
+  position: relative;
+  font-family: 'Khmer UI.ttf';
+  font-weight: 300;
+  font-size: 140%;
+  line-height: 55px;
+  color: #9A1656;
+  text-decoration: line-through;
+  text-decoration-color: #9A1656;
+  margin: 0;
+}
+
+#cards .cina1 {
+  display: inline-block;
+  border-radius: 63px;
+  left: 10%;
+  background-color: #F0DAE1;
+  transition: all 0.3s ease; 
+  position: relative;
+  padding: 4%; 
+}
+#cards .cina2 {
+  display: inline-block;
+  border-radius: 63px;
+  left: 10%;
+  background-color: #F0DAE1;
+  transition: all 0.3s ease; 
+  position: relative; 
+  text-align: right;
+  padding: 4%;
+  transition: all 0.3s ease;
+}
+
+#cards1 .cina1 {
+  display: inline-block;
+  border-radius: 35px;
+  left: 11%;
+  background-color: #F0DAE1;
+  transition: all 0.3s ease; 
+  position: relative;
+  padding: 6%;
+  padding-top: 3%;
+  padding-bottom: 3%;
+  color: #9A1656;
+  font-size: 22px;
+  font-family: 'Khmer UI.ttf';
+  border: 1px solid #9A1656;
+  transition: all 0.4s ease;
+}
+#cards1 .cina1:hover {
+  background-color: #9A1656;
+  color: #F0DAE1;
+  transition: all 0.4s ease;
+}
+#cards .cina1::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000;
+  transition: all 3s ease; /* Add transition effect */
+}
+#cards .cina2::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000;
+  transition: all 3s ease; /* Add transition effect */
+}
+
+
+
+#cards .cina1:hover::before {
+  content: "Купить"; /* Change text on hover */
+  color: #9A1656; /* Change text color on hover */
+  font-family: 'Khmer UI.ttf';
+  font-size: 22px;
+}
+#cards .cina2:hover::before {
+  content: "Купить"; /* Change text on hover */
+  color: #9A1656; /* Change text color on hover */
+  font-family: 'Khmer UI.ttf';
+  font-size: 22px;
+}
+
+
+#cards .cina1:hover span.new,
+#cards .cina1:hover span.last {
+  color: rgba(154, 22, 86, 0);
+  text-decoration: none;
+}
+#cards .cina2:hover span.new,
+#cards .cina2:hover span.last {
+  color: rgba(154, 22, 86, 0);
+  text-decoration: none;
+}
+
+.footerlogo{
+  font-size: 40px;
+  color: rgba(250, 240, 240, 1);
+  font-weight: 400;
+  font-family: "ZenTokyoZoo-Regular.ttf";
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-align: center;
+  margin-top: 1%;
+  margin-bottom: 2%;
+}
+.footertxt{
+  font-family: 'Khmer UI.ttf';
+}
+.regist{
+  transition: background-color 0.3s ease;
+  background-color: #9A1656;
+
+}
+.regist:hover {
+  background-color: #3e8e41; /* новый цвет кнопки при наведении */
+}
+
+.registration-form {
+  border: 5px solid white; /* установить толщину и цвет границы */
+  padding: 2px; /* добавить отступы для внутреннего содержимого формы */
+  text-align: center;
+  margin: auto;
+  margin-bottom: 3%;
+  width: 45%;
+  height: 150%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  border-radius: 20%;
+}
+.undershapka2{
+  position: relative;
+  text-align: right;
+  background-image: url('../src/img/kat1.png');
+  background-size: cover;
+  height: 65vh;
+}
+.txt1{
+  font-family: 'Khmer UI.ttf';
+  font-size: 350%;
+  font-weight: bold;
+  color: #F6ECEC;
+  padding-top: 5%;
+  padding-bottom: 3%;
+  position: relative;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin: auto;
+  text-align: center;
+}
+.txt11{
+  font-family: 'Khmer UI.ttf';
+  font-size: 280%;
+  color: #F6ECEC;
+  display: block;
+  padding-bottom: 1%;
+  position: relative;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin: auto;
+  text-align: center;
+  line-height: 340%;
+  font-style: normal;
+}
+.line {
+  border: 3px solid #9a1656;
+  height: 6px;
+  background-color: #9a1656;
+  width: 35%;
+  text-align: center;
+  margin: auto;
+  border-radius: 5px;
+  opacity: 0.5;
+}
+.txt2{
+  font-family: 'Khmer UI.ttf';
+  font-size: 400%;
+  font-weight: bold;
+  color: #9a1656a1;
+  padding-top: 5%;
+  padding-bottom: 2%;
+  position: relative;
+  margin: auto;
+  text-align: center;
+}
+.txt22{
+  font-family: 'Khmer UI.ttf';
+  font-size: 300%;
+  color: #9a1656a1;
+  display: block;
+  padding-bottom: 1%;
+  position: relative;
+  margin: auto;
+  text-align: center;
+  line-height: 340%;
+  font-style: normal;
+}
+.cat{
+  width: 60%;
+  height: 85%;
+  border-radius: 63px;
+  display: inline-block;
+}
+.cattxt{
+  font-family: 'Khmer UI.ttf';
+  font-style: bold;
+  font-weight: 500;
+  font-size: 60px;
+  line-height: 100%;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  padding-top: 35%;
+  padding-bottom: 35%;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* две колонки */
+  grid-template-rows: repeat(3, 1fr); /* три ряда */
+  gap: 1%; /* расстояние между элементами */
+  margin-bottom: 5%;
+}
+.line-faq{
+  border: 3px solid #9A1656;
+  width: 100%;
+  opacity: 1;
+  margin-top: 0;
+}
+.undershapka3{
+  position: relative;
+  text-align: right;
+  background: #F9E3E1;
+  height: 50vh;
+}
+.undershapka4{
+  position: relative;
+  text-align: center;
+  background-image: url('../src/img/backauth1.jpg');
+  background-size: cover;
+  height: 65vh;
+
+}
+.cardscont {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-left: 7%;
+  margin-right: 7%;
+  margin-bottom: 3%;
+}
+.menucat{
+  padding: 10%;
+}
+#catcat .nav-link {
+  background-color: #F0DAE1 !important;
+  color: #9A1656 !important;
+}
+#catcat .nav-link.active {
+  background-color: #9A1656 !important;
+  color: #F0DAE1 !important;
+}
+.tovarscont {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5%;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 3%;
+}
+.tovar{
+  margin-bottom: 2%;
+}
+
+#telofaq{
+  font-family: 'Khmer UI.ttf';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 230%;
+  line-height: 60px;
+  text-align: center;
+  color: #000000;
+  margin: 7%;
+}
+.float-end {
+  text-align: right !important; /* добавьте нужный вам отступ между элементами */
+}
+.scroll-button {
+  position: fixed;
+  bottom: 3%;
+  right: 2%;
+  background-color: #F0DAE1;
+  color: #9a1656;
+  border: 1px solid #9A1656;
+  border-radius: 70%;
+  font-size: 130%;
+  cursor: pointer;
+  padding-top: 0.1%;
+  padding-bottom: 0.4%;
+  padding-right: 0.6%;
+  padding-left: 0.6%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.scroll-button.visible {
+  opacity: 1;
+}
+
+
+
