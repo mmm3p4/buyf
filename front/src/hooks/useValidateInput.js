@@ -9,14 +9,11 @@ import { Button } from "reactstrap";
 
 const FormCode = (props) => {
     const [errors, setErrors] = useState('')
-    const navigate = useNavigate()
     const handleSubmit = async (email, code, username, password) => {
         try {
             await AuthService.postActivationCode(email, code)
             .then(async () => {
-                console.log(username, password)
-                await AuthService.login(username, password);
-                navigate("/")
+                await AuthService.login(username, password).then(() => window.location.href = '/');
             });
         } catch (e) {
             setErrors(e.response.data.message);
@@ -67,11 +64,11 @@ const FormCode = (props) => {
                                 <p style={{ color: 'red' }}>{errors}</p>
                             </div> : null}
                         </div>
-                        <Button disabled={!(isValid && dirty) || isSubmitting} style={{ backgroundColor: "#9A1656", textDecoration: "none", color: "#F0DAE1", display: "block", margin: "0 auto", marginTop: "4%", padding: "2%", width: "fit-content", borderRadius: "25%" }} onClick={async () => {
+                        <button type={'submit'} disabled={!(isValid && dirty) || isSubmitting} onClick={async () => {
                             isSubmitting = true
-                            await handleSubmit(props.email, values.code, props.username, props.password)
+                            await handleSubmit(props.props.email, values.code, props.props.username, props.props.password)
                             setTimeout(() => resetForm(), 1000)
-                        }}>Отправить</Button>
+                        }}>Отправить</button>
                     </Form>
                 )}
             </Formik>
