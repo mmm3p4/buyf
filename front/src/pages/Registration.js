@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 import { Label, Form, FormGroup, Button, Input } from 'reactstrap'
 import AuthService from '../services/Auth.service';
 import '../index.css'
@@ -13,10 +12,7 @@ const Registration = () => {
     const [passwordInvalid, setPasswordInvalid] = useState(false);
     const [nameInvalid, setNameInvalid] = useState(false);
     const [isWaitingForActivationCode, setIsWaitingForActivationCode] = useState(false);
-    const [activationCode, setActivationCode] = useState('');
-    const [error, setError] = useState("");
     const [userInfo, setUserInfo] = useState({});
-    const navigate = useNavigate()
 
     const onRegistration = async () => {
         setEmailInvalid(false);

@@ -1,6 +1,5 @@
-import React, { useCallback } from "react";
+import React from "react";
 import '../index.css';
-import Corsinka from "../img/Corsinka.png"
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { useState, useEffect } from "react";

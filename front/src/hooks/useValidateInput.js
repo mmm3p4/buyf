@@ -8,15 +8,11 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const FormCode = (props) => {
     const [errors, setErrors] = useState('')
-    const navigate = useNavigate()
-    console.log(props)
     const handleSubmit = async (email, code, username, password) => {
         try {
             await AuthService.postActivationCode(email, code)
             .then(async () => {
-                console.log(username, password)
-                await AuthService.login(username, password);
-                navigate("/")
+                await AuthService.login(username, password).then(() => window.location.href = '/');
             });
         } catch (e) {
             setErrors(e.response.data.message);
@@ -67,12 +63,11 @@ const FormCode = (props) => {
                                 <h4 style={{color: 'red'}}>{errors}</h4>
                             </div> : null}
                         </div>
-                        <Link type={'submit'} disabled={!(isValid && dirty) || isSubmitting} onClick={async () => {
+                        <button type={'submit'} disabled={!(isValid && dirty) || isSubmitting} onClick={async () => {
                             isSubmitting = true
-                            await handleSubmit(props.email, values.code, props.username, props.password)
-                            console.log(values.code)
+                            await handleSubmit(props.props.email, values.code, props.props.username, props.props.password)
                             setTimeout(() => resetForm(), 1000)
-                        }}>Отправить</Link>
+                        }}>Отправить</button>
                     </Form>
                 )}
             </Formik>
