@@ -167,7 +167,7 @@ app.post("/activation", async (req, res) => {
     }
     if (compareCode()) {
       db.user.update({ activated: true }, { where: { email: req.body.email } })
-      res.send(true)
+      res.status(200).json({message: "Аккаунт активирован"})
     } else {
       throw new Error()
     }
@@ -183,6 +183,7 @@ app.post("/api/user/:username/activate/:activationCode", async (req,res) => {
       }
       const compareCode = () => {
         if (user.activation_code === req.params.activationCode) {
+          
           return true
         }
         else {
@@ -203,29 +204,38 @@ app.post("/api/user/:username/activate/:activationCode", async (req,res) => {
 
 
 
-// app.post("/order", async (req,res) => {
-//   try {
-//     // создаем заказ
-//     const userId = req.body.userId
-//     const productIds = req.body.productIds
-//     const order = await db.order.create( userId );
+app.post("/order", async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const productIds = req.body.productIds;
 
-//     // находим все продукты по id и связываем их с заказом
-//     const orderProducts = productIds.map(productId => ({
-//       productId,
-//       orderId: order.id
-//     }));
-//     await db.orderproducts.bulkCreate(orderProducts);
+    // Находим все продукты по id и связываем их с заказом
+    const orderProducts = await Promise.all(productIds.map(async (productId) => {
+      const product = await db.product.findOne({ where: { id: productId } });
+      if (!product) {
+        throw new Error(`Продукт с id ${productId} не найден`);
+      }
+      return {
+        productId,
+        quantity: 1, // предполагаем, что количество товара в заказе всегда равно 1
+        price: product.price, // записываем цену товара в заказ
+      };
+    }));
+    
+    // Создаем заказ и привязываем к нему продукты
+    const order = await db.order.create({ userId, orderproducts: orderProducts }, { include: db.orderproducts });
 
-//     // высчитываем цену заказа и обновляем ее в заказе
-//     const totalPrice = await db.orderproducts.sum('price', { where: { orderId: order.id } });
-//     await order.update({ price: totalPrice });
+    // Высчитываем цену заказа и обновляем ее в заказе
+    const totalPrice = orderProducts.reduce((acc, product) => acc + product.price, 0);
+    await order.update({ price: totalPrice });
 
-//     return order;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// })
+    return res.send(order);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Ошибка создания заказа" });
+  }
+});
+
 
 
 

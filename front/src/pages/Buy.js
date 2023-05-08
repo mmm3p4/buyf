@@ -32,6 +32,11 @@ function Buy() {
   if (!product.id) return null;
 
   return (
+    <>
+    <div style={{marginTop: "2%", display: "flex", justifyContent: "space-between" }}>
+  <Button variant="btn-light" href='/' style={{ backgroundColor: "#F0DAE1", color: "#9A1656", display: "inline-block", border: "none", width: "8%", marginLeft: "12%", float: "left"}}>На главную</Button>
+  <Button variant="btn-light" href='/catalog' style={{ backgroundColor: "#F0DAE1", color: "#9A1656", display: "inline-block", border: "none", width: "8%", float: "right", marginRight: "12%"}}>В каталог</Button>
+  </div>
     <MDBRow>
     <div id="cards1">
       <MDBCol style={{display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "-3%"}}>
@@ -66,6 +71,8 @@ function Buy() {
         </MDBCol>
       </div>
       </MDBRow>
+      
+  </>
   )
 }
 

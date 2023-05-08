@@ -17,8 +17,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         activation_code: {
             type: Sequelize.STRING,
-            defaultValue: () => crypto.randomBytes(5).toString('hex').slice(0, 6)
-        }
+            defaultValue: () => Math.floor(Math.random() * 1000000).toString().padStart(6, '0')
+          }
+          
+          
     });
         User.addHook('beforeCreate', async (user) => {
             const activationCode = user.activation_code;

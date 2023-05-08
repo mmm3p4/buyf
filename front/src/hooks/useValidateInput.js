@@ -3,13 +3,13 @@ import * as Yup from 'yup'
 import {useState} from "react";
 import AuthService from "../services/Auth.service";
 import { Link, useNavigate } from 'react-router-dom';
+import { Button } from "reactstrap";
 
 
 
 const FormCode = (props) => {
     const [errors, setErrors] = useState('')
     const navigate = useNavigate()
-    console.log(props)
     const handleSubmit = async (email, code, username, password) => {
         try {
             await AuthService.postActivationCode(email, code)
@@ -22,7 +22,7 @@ const FormCode = (props) => {
             setErrors(e.response.data.message);
         }
     }
-
+      
     return (
         <>
             <Formik
@@ -34,7 +34,7 @@ const FormCode = (props) => {
 
                 validationSchema={Yup.object({
                     code: Yup.string()
-                        .required('Обязательное поле!'),
+                    .required(<p style={{ color: "red" }}>Введите код активации!</p>),
                 })}
 
                 onSubmit={
@@ -48,7 +48,7 @@ const FormCode = (props) => {
                       resetForm
                   }) => (
                     <Form className='registration-form' style={{ backgroundColor: "#F0DAE1" }}>
-                        <p style={{ fontSize: "20px", color: "#9A1656", fontWeight: "bold" }}>Введите код</p>
+                        <p style={{ fontSize: "20px", color: "#9A1656", fontWeight: "bold" }}>Введите код активации,<br /> который пришел на вашу электронную почту</p>
                         <div>
 
                             <div>
@@ -58,21 +58,20 @@ const FormCode = (props) => {
                                     id={"code"}
                                     placeholder="&nbsp;"
                                     type={'text'}
+                                    style={{ width: "40%", margin: "auto", marginTop: "4%" }}
                                 />
-                                <label>Эл. почта</label>
                                 <ErrorMessage name={'code'} component={'div'}/>
                             </div>
                             
                             {errors.length > 0 ? <div>
-                                <h4 style={{color: 'red'}}>{errors}</h4>
+                                <p style={{ color: 'red' }}>{errors}</p>
                             </div> : null}
                         </div>
-                        <Link type={'submit'} disabled={!(isValid && dirty) || isSubmitting} onClick={async () => {
+                        <Button disabled={!(isValid && dirty) || isSubmitting} style={{ backgroundColor: "#9A1656", textDecoration: "none", color: "#F0DAE1", display: "block", margin: "0 auto", marginTop: "4%", padding: "2%", width: "fit-content", borderRadius: "25%" }} onClick={async () => {
                             isSubmitting = true
                             await handleSubmit(props.email, values.code, props.username, props.password)
-                            console.log(values.code)
                             setTimeout(() => resetForm(), 1000)
-                        }}>Отправить</Link>
+                        }}>Отправить</Button>
                     </Form>
                 )}
             </Formik>
