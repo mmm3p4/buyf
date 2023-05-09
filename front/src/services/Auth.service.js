@@ -18,11 +18,12 @@ class AuthService {
     logout() {
         localStorage.removeItem("user");
     }
-    register(username, email, password) {
+    register(username, email, password, subscribed) {
             return axios.post(API_URL + "signup", {
                 username,
                 email,
                 password,
+                subscribed,
                 roles: ['user']
             });
     }
@@ -47,6 +48,19 @@ class AuthService {
                 email,
                 activation_code
             })
+    }
+    postSubscribed(email, subscribed) {
+        return axios
+            .post("http://localhost:8081/subscribing", {
+                email,
+                subscribed
+            })
+    }
+    isSubscribed(email) {
+        return axios.get("http://localhost:8081/issubscribing", { params: { email } })
+      }
+    getProductById(id) {
+        return axios.get(`http://localhost:8081/isproduct/${id}`,  { params: { id } });
     }
 }
 export default new AuthService()

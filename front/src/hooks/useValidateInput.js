@@ -2,23 +2,26 @@ import {ErrorMessage, Field, Form, Formik} from "formik";
 import * as Yup from 'yup'
 import {useState} from "react";
 import AuthService from "../services/Auth.service";
-import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "reactstrap";
+
 
 
 
 const FormCode = (props) => {
     const [errors, setErrors] = useState('')
-    const handleSubmit = async (email, code, username, password) => {
+    const handleSubmit = async (email, code, username, password, subscribed) => {
         try {
-            await AuthService.postActivationCode(email, code)
-            .then(async () => {
-                await AuthService.login(username, password).then(() => window.location.href = '/');
-            });
-        } catch (e) {
-            setErrors(e.response.data.message);
+            await AuthService.postActivationCode(email, code);
+            if (subscribed) {
+                await AuthService.postSubscribed(email, true);
+            }
+            await AuthService.login(username, password);
+            window.location.href = '/';
+        } catch (error) {
+            setErrors(error.response.data.message);
         }
     }
+    
       
     return (
         <>
@@ -64,11 +67,11 @@ const FormCode = (props) => {
                                 <p style={{ color: 'red' }}>{errors}</p>
                             </div> : null}
                         </div>
-                        <button type={'submit'} disabled={!(isValid && dirty) || isSubmitting} onClick={async () => {
+                        <Button type={'submit'} disabled={!(isValid && dirty) || isSubmitting} onClick={async () => {
                             isSubmitting = true
-                            await handleSubmit(props.props.email, values.code, props.props.username, props.props.password)
+                            await handleSubmit(props.props.email, values.code, props.props.username, props.props.password, props.props.subscribed)
                             setTimeout(() => resetForm(), 1000)
-                        }}>Отправить</button>
+                        }}>Отправить</Button>
                     </Form>
                 )}
             </Formik>

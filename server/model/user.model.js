@@ -15,6 +15,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.BOOLEAN,
             defaultValue: false
         },
+        subscribed: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
+        },
         activation_code: {
             type: Sequelize.STRING,
             defaultValue: () => Math.floor(Math.random() * 1000000).toString().padStart(6, '0')
@@ -25,6 +29,7 @@ module.exports = (sequelize, Sequelize) => {
         User.addHook('beforeCreate', async (user) => {
             const activationCode = user.activation_code;
             MailService.sendActivationCode(user.email, activationCode);
-        });
+                });
+
     return User;
 };    

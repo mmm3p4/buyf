@@ -27,6 +27,18 @@ app.get('/product/:id', async (req, res) => {
 
   return res.json(product);
 });
+app.get('/isproduct/:id', async (req, res) => {
+  try {
+  const productId = req.params.id;
+  const product = await db.product.findByPk(productId);
+
+  if (!product) {
+    res.status(404).json({message: false});
+  }
+  else {res.status(200).json({message: true})}
+} catch (err) {
+  console.error(err.message);}
+});
 app.get('/products', async (req, res) => {
   try {
     const products = await db.product.findAll({ order: [['id', 'ASC']] });
@@ -202,7 +214,56 @@ app.post("/api/user/:username/activate/:activationCode", async (req,res) => {
   })
 // MailService.sendTestMail('frantsova.s01@gmail.com')
 
+app.post("/subscribing", async (req, res) => {
+  try {
+    const user = await db.user.findOne({ where: { email: req.body.email } });
+    if (!user) {
+      return res.status(404).send('Пользователь не найден')
+    }
+    const compareSubsc = () => {
+      if (req.body.subscribed) {
+        MailService.sendTestMail(req.body.email)
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    if (compareSubsc()) {
+      db.user.update({ subscribed: true }, { where: { email: req.body.email } })
+      res.status(200).json({message: "Аккаунтподписан на рассылку"})
+    } else {
+      throw new Error()
+    }
+  } catch (error) {
+    return res.status(500).send({message: "Ошибка"});
+  }
+})
 
+app.get("/issubscribing", async (req, res) => {
+  try {
+    const user = await db.user.findOne({ where: { email: req.params.email } });
+    if (!user) {
+      return res.status(404).send('Пользователь не найден')
+    }
+    const isSubscribe = () => {
+      if (user.subscribed) {
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    if (isSubscribe()) {
+      return res.json({ subscribed: true });
+    } else {
+      throw new Error();
+    }
+    
+  } catch (error) {
+    return res.status(500).send({message: "Ошибка"});
+  }
+})
 
 app.post("/order", async (req, res) => {
   try {

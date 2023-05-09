@@ -7,6 +7,7 @@ import FormCode from '../hooks/useValidateInput';
 const Registration = () => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [subscribed, setSubcribed] = useState(false);
     const [username, setName] = useState('');
     const [emailInvalid, setEmailInvalid] = useState(false);
     const [passwordInvalid, setPasswordInvalid] = useState(false);
@@ -26,17 +27,18 @@ const Registration = () => {
             alert("Ошибка ввода");
         }
 
-        await AuthService.register(username, email, password)
+        await AuthService.register(username, email, password, subscribed)
             .then((response) => {
                 console.log(response.data)
                 if (response.status === 200) {
-                    setUserInfo({username,email,password})
+                    setUserInfo({ username, email, password, subscribed })
                     setIsWaitingForActivationCode(true)
                 } else {
                     setName("");
                     setEmail("");
                     setPassword("");
-                   
+                    setSubcribed(false);
+
                 }
             })
             .catch((err) => {
@@ -53,6 +55,9 @@ const Registration = () => {
     }
     const handleOnChange2 = (event) => {
         setPassword(event.target.value)
+    }
+    const handleOnChange3 = (event) => {
+        setSubcribed(event.target.value)
     }
 
     return (
@@ -110,6 +115,12 @@ const Registration = () => {
                                     invalid={passwordInvalid}
                                     style={{ width: "40%", margin: "auto" }}
                                 />
+                            </FormGroup>
+                            <FormGroup check>
+                                <Label check>
+                                    <Input type="checkbox" value={subscribed} onChange={(event) => handleOnChange3(event)} />
+                                    Я подписываюсь на рассылку
+                                </Label>
                             </FormGroup>
                         </Form>
                         <Button variant="btn-light" onClick={onRegistration} style={{ backgroundColor: "#F0DAE1", color: "#9A1656", display: "block", margin: "0 auto", marginBottom: "2%", border: "none" }}>Зарегистрироваться</Button>

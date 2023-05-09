@@ -96,7 +96,8 @@ body {
   width: 55%;
   background-color: #F0DAE1;
   margin: auto;
-  margin-bottom: 5%; 
+  margin-bottom: 4%; 
+  margin-top: 4%;
   border-radius: 63px;
   display: flex;
   padding: 2%;
@@ -110,9 +111,8 @@ body {
 #cards1 .buket1{
   border-radius: 80px;
   border: 10px solid #F0DAE1;
-  margin: 3%;
-  margin-right: 6%;
-  margin-left: 6%;
+  margin-right: 4%;
+  margin-left: 8%;
   display: inline-block;
   width: 100%;
   box-shadow: 1px 4px 6px rgba(219, 69, 152, 0.334), 1px 6px 8px rgba(140, 2, 75, 0.384), 1px 8px 10px rgba(215, 189, 61, 0.1), 1px 10px 12px rgba(25, 4, 12, 0.396);
@@ -491,6 +491,48 @@ body {
 }
 
 .scroll-button.visible {
+  opacity: 1;
+}
+.rightbtn{
+  margin: auto;
+  position: absolute;
+  top: 55%;
+  right: 5%;
+  transform: translateY(-50%);
+  display: inline-block;
+  margin-right: 12%;
+  text-align: right;
+  background-color: #F0DAE1;
+  color: #9a1656;
+  border: 1px solid #9A1656;
+  border-radius: 70%;
+  font-size: 130%;
+  cursor: pointer;
+  padding-top: 0.1%;
+  padding-bottom: 0.4%;
+  padding-right: 0.6%;
+  padding-left: 0.6%;
+  opacity: 1;
+}
+.leftbtn{
+  margin: auto;
+  position: absolute;
+  top: 55%;
+  left: 5%;
+  transform: translateY(-50%);
+  display: inline-block;
+  margin-left: 12%;
+  text-align: left;
+  background-color: #F0DAE1;
+  color: #9a1656;
+  border: 1px solid #9A1656;
+  border-radius: 70%;
+  font-size: 130%;
+  cursor: pointer;
+  padding-top: 0.1%;
+  padding-bottom: 0.4%;
+  padding-right: 0.6%;
+  padding-left: 0.6%;
   opacity: 1;
 }
 

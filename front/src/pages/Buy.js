@@ -1,10 +1,11 @@
 
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useRef, useMemo} from "react";
+import { useParams} from "react-router-dom";
 import '../index.css';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import axios from "axios";
+import AuthService from '../services/Auth.service';
 import sale from "../img/sale.png"
 import {
   MDBFooter,
@@ -14,12 +15,47 @@ import {
   MDBRow,
   MDBBtn
 } from 'mdb-react-ui-kit';
+import RightButton from "../components/RightButton";
+import LeftButton from "../components/LeftButton";
 
 function Buy() {
   const [product, setProduct] = useState({});
   const productId = useParams()
+  const [hasNext, setHasNext] = useState(true);
 
   
+  const nextProductIdRef = useRef(Number(productId.id) + 1);
+
+  const handleNext = () => {
+    window.location.href = `http://localhost:3000/product/${nextProductIdRef.current}`;
+    nextProductIdRef.current += 1;
+  };
+  const checkNextProduct = async () => {
+    try {
+      const response = await AuthService.getProductById(nextProductIdRef.current);
+      if (response.status === 200) {
+        setHasNext(true);
+      } else if (response.status === 404) {
+        setHasNext(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setHasNext(false);
+    }
+  };
+  
+  useEffect(() => {
+    checkNextProduct();
+  }, []);
+const pastProductIdRef = useRef(Number(productId.id) - 1);
+
+  const handlePast = () => {
+  window.location.href = `http://localhost:3000/product/${pastProductIdRef.current}`;
+  pastProductIdRef.current -= 1;
+};
+
+  
+
 
   useEffect(() => {
     axios.get(`http://localhost:8081/product/${productId.id}`).then((response) => {
@@ -27,15 +63,14 @@ function Buy() {
       
     });
   }, []);
-  console.log(product.photoId)
   
   if (!product.id) return null;
 
   return (
     <>
-    <div style={{marginTop: "2%", display: "flex", justifyContent: "space-between" }}>
-  <Button variant="btn-light" href='/' style={{ backgroundColor: "#F0DAE1", color: "#9A1656", display: "inline-block", border: "none", width: "8%", marginLeft: "12%", float: "left"}}>На главную</Button>
-  <Button variant="btn-light" href='/catalog' style={{ backgroundColor: "#F0DAE1", color: "#9A1656", display: "inline-block", border: "none", width: "8%", float: "right", marginRight: "12%"}}>В каталог</Button>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+    {productId.id > 1 && <LeftButton handlePast={handlePast} />}
+    {hasNext && <RightButton handleNext={handleNext} />} 
   </div>
     <MDBRow>
     <div id="cards1">
