@@ -7,6 +7,7 @@ const auth = require('../routes/auth.routes');
 const path = require("path");
 const fileUploads = require("express-fileupload");
 const MailService = require("./service/mail/mailer.service")
+var bcrypt = require("bcryptjs");
 
 app.use(cors({
   origin: '*'
@@ -79,7 +80,7 @@ app.get("/products/:catId", async (req, res) => {
 
 
 app.post('/product', async (req, res) => {
-  const { name, price, amount } = req.body;
+  const { name, price, amount, catid,photoId, lastprice, description } = req.body;
 
   try {
     const existingProduct = await db.product.findOne({ where: { name } });
@@ -88,7 +89,7 @@ app.post('/product', async (req, res) => {
       return res.status(409).send('Товар уже существует');
     }
 
-    const newProduct = await db.product.create({ name, price, amount });
+    const newProduct = await db.product.create({ name, price, amount, catid,photoId, lastprice, description });
 
     return res.status(201).json(newProduct);
   } catch (error) {
@@ -155,6 +156,38 @@ app.get("/admin/users", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+app.put("/newpass", async (req, res) => {
+    try {
+      const user = await db.user.findOne({ where: { username: req.body.username } });
+      const naturalpass = await bcrypt.compare(req.body.password, user.password)
+      if (!user) {
+        return res.status(404).send('Пользователь не найден')
+      }
+      if (req.body.newpassword === req.body.password) {
+        return res.status(500).send({message: "Текущий пароль и новый пароль совпадают"});
+      }
+      const comparePass =  () => {
+        if (!naturalpass) {
+          return false
+        }
+        else {
+            return true
+          }
+      }  
+      if (comparePass()) { 
+        const hashpass = await bcrypt.hash(req.body.newpassword, 8)
+        db.user.update({ password: hashpass }, { where: { username: req.body.username } })
+        res.status(200).json({message: "Пароль изменен"})
+      } else { 
+        throw new Error()
+      }
+    }
+      catch (error) {
+        return res.status(500).send({message: "Текущий пароль неверный"});
+      }
+      
+})
 
 app.use((err, req, res, next) => {
   console.error(err);
@@ -240,27 +273,22 @@ app.post("/subscribing", async (req, res) => {
   }
 })
 
-app.get("/issubscribing", async (req, res) => {
+app.get("/issubscribing/:email", async (req, res) => {
   try {
     const user = await db.user.findOne({ where: { email: req.params.email } });
     if (!user) {
       return res.status(404).send('Пользователь не найден')
     }
-    const isSubscribe = () => {
-      if (user.subscribed) {
-        return true
-      }
-      else {
-        return false
+    if (user.subscribed) {
+        return res.status(200).json({message:'подписка есть'})
+    }
+    else {
+        console.log("юзер не подписан")
+        return res.status(305).json({message:'подписка нет'})
       }
     }
-    if (isSubscribe()) {
-      return res.json({ subscribed: true });
-    } else {
-      throw new Error();
-    }
-    
-  } catch (error) {
+
+    catch (error) {
     return res.status(500).send({message: "Ошибка"});
   }
 })

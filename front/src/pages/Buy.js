@@ -17,6 +17,7 @@ import {
 } from 'mdb-react-ui-kit';
 import RightButton from "../components/RightButton";
 import LeftButton from "../components/LeftButton";
+import Alert from "../components/Alert";
 
 function Buy() {
   const [product, setProduct] = useState({});
@@ -105,6 +106,7 @@ const pastProductIdRef = useRef(Number(productId.id) - 1);
         </Card.Body>
         </MDBCol>
       </div>
+      
       </MDBRow>
       
   </>

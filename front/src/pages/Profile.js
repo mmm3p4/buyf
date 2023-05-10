@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import AuthService from '../services/Auth.service';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import Col from 'react-bootstrap/Col';
+import Nav from 'react-bootstrap/Nav';
+import Row from 'react-bootstrap/Row';
+import { MDBTable, MDBCol, MDBTableHead, MDBTableBody, MDBRow } from 'mdb-react-ui-kit';
+import Button from 'react-bootstrap/Button';
+import Modalpass from '../components/ModalPass';
 
 const Profile = () => {
     const [currentUser, setcurrentUser] = useState(undefined);
@@ -10,43 +18,57 @@ const Profile = () => {
         if (user) {
             setcurrentUser(user);
         }
+        else {
+            window.location.href = "/auth";
+        }
     }, [])
 
+    const [modalShow, setModalShow] = React.useState(false);
 
-    const handleLogout = () => {
-        AuthService.logout();
-        window.location.href = '/';
-    };
+
+
 
     return (
         <div className='container'>
-            {currentUser ? (
+            {currentUser && (
+                <div style={{ marginTop: "5%", color: "#9A1656", textAlign: "center" }}>
 
-                <div>
-                    <header className='jumbotron'>
-                        <h3>
-                            <strong>{currentUser.username}</strong> Profile
-                        </h3>
-                    </header>
-                    <p>
-                        <strong>Id:</strong> {currentUser.id}
-                    </p>
-                    <p>
-                        <strong>Email:</strong> {currentUser.email}
-                    </p>
-                </div>
-
-
-
-
-            ) : (
-                <div>
-                    <br />
-                    <p>Please login to access this page.</p>
-                </div>
-            )}
+                    <h2 style={{ marginBottom: "5%" }}>
+                        Профиль: <strong>{currentUser.username}</strong>
+                    </h2>
+                    <MDBTable style={{margin: "10% auto"}}>
+                        <MDBRow style={{ background: "#9A1656", color: "#F0DAE1"}}>
+                            <MDBCol>
+                                <strong>Мои заказы</strong>
+                            </MDBCol>
+                            <MDBCol>
+                                <strong>Мои данные</strong>
+                            </MDBCol>
+                            
+                        </MDBRow>
+                        <MDBRow style={{backgroundColor: "#F0DAE1", color: "#9A1656"}}>
+                        <MDBCol>
+                                <strong>Пусто</strong>
+                            </MDBCol>
+                            <MDBCol>
+                            <strong>Email:</strong> {currentUser.email}
+                            </MDBCol>
+                        </MDBRow>
+                        <MDBRow style={{backgroundColor: "#F0DAE1", color: "#9A1656"}}>
+                            <MDBCol></MDBCol>
+                            <MDBCol>
+                            <Button variant="outline-light" onClick={() => setModalShow(true)}  style={{ display: "inline-block", marginRight: "9px", border: "1px solid #9A1656", color: "#9A1656" }}>Сменить пароль</Button>
+                            </MDBCol>
+                        </MDBRow>
+                    </MDBTable>
+                </div>)}
+                <Modalpass
+                      show={modalShow}
+                      onHide={() => setModalShow(false)}
+                    />
         </div>
-    );
+        
+            );
 };
+            export default Profile;
 
-export default Profile;

@@ -14,6 +14,7 @@ import Faq from './pages/Faq';
 import ScrollButton from './components/ScrollButton';
 import Buy from './pages/Buy';
 import {observer} from "mobx-react-lite"
+import Alert from './components/Alert';
 
 
 

@@ -57,10 +57,17 @@ class AuthService {
             })
     }
     isSubscribed(email) {
-        return axios.get("http://localhost:8081/issubscribing", { params: { email } })
+        return axios.get(`http://localhost:8081/issubscribing/${email}`, { params: { email } })
       }
     getProductById(id) {
         return axios.get(`http://localhost:8081/isproduct/${id}`,  { params: { id } });
+    }
+    updatePass(username, password, newpassword) {
+        return axios.put("http://localhost:8081/newpass", {
+            username,
+            password,
+            newpassword
+        })
     }
 }
 export default new AuthService()

@@ -12,73 +12,84 @@ import Button from 'react-bootstrap/Button';
 import { useState, useEffect } from 'react'
 import AuthService from '../services/Auth.service';
 import validator from 'validator';
+import Modal from 'react-bootstrap/Modal'; 
 
 export default function Footer() {
   const [isSubscribe, setIsSubscribe] = useState(false);
-  const [showBlock, setShowBlock] = useState(localStorage.getItem('showBlock') !== 'false');
   const user = JSON.parse(localStorage.getItem("user"));
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     if (user) {
       AuthService.isSubscribed(user.email)
         .then((response) => {
-          setIsSubscribe(response.data.isSubscribed);
+          if (response.status === 200)
+            setIsSubscribe(true);
+          else setIsSubscribe(false);
         })
         .catch((error) => {
           console.log(error);
         });
     }
-    setShowBlock(localStorage.getItem('showBlock') !== 'false');
   }, []);
 
-  const handleHideBlock = () => {
-    localStorage.setItem('showBlock', 'false');
-    setShowBlock(false);
-  }
 
   const handleSubscribe = async () => {
-      try {
-        await AuthService.postSubscribed(user.email, true);
-        console.log("Subscription successful!");
-      } catch (error) {
-        console.error("Error subscribing:", error);
-      }
-      setShowBlock(false);
-      localStorage.setItem("showBlock", "false");
+    try {
+      await AuthService.postSubscribed(user.email, true);
+      return <>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Modal title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          I will not close if you click outside me. Don not even try to press
+          escape key.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary">Understood</Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+    } catch (error) {
+      console.error("Error subscribing:", error);
     }
+  }
 
-
-
-  useEffect(() => {
-    const showBlockFromLocalStorage = localStorage.getItem("showBlock");
-    setShowBlock(showBlockFromLocalStorage !== "false");
-  }, []);
   return (
+    <>
+    
     <MDBFooter className='text-center' color='white' style={{ backgroundColor: "#9A1656", boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)" }}>
       <MDBContainer className='p-1'>
+        
         <section>
           <p className='footerlogo'>BUYF</p>
           <form>
             <MDBRow className='d-flex justify-content-center'>
-              {user && !isSubscribe && showBlock ? (
-                <>
-                <MDBCol size="auto">
-                <p className='pt-2'>
-                  <strong>Хотите подписаться на рассылку BUYF?  Ваш e-mail:   {user.email}</strong>
-                </p>
-                </MDBCol>
-              {/* <MDBCol md='5' start>
-                <MDBInput contrast type='email' value={email} onChange={handleEmailChange} className='mb-3 text-center' placeholder='Подписка на рассылку' style={{ textAlign: "center" }} />
-              </MDBCol> */}
-              <MDBCol size="auto" style={{display: "flex", marginTop: 0, padding: "4px"}}>
-              <Button variant="outline-light" style={{display: "inline-block", marginRight: "9px"}} onClick={handleSubscribe}>Подписаться</Button> 
-              <Button variant="light" style={{display: "inline-block"}} onClick={() => {
-                        setShowBlock(false);
-                        localStorage.setItem("showBlock", "false");
-                      }}>Больше не показывать</Button>
-              </MDBCol>
-              </>
-              ): (null)}
+              {user ?
+                !isSubscribe ? (
+                  <>
+                    <MDBCol size="auto">
+                      <p className='pt-2'>
+                        <strong>Хотите подписаться на рассылку BUYF?  Ваш e-mail:   {user.email}</strong>
+                      </p>
+                    </MDBCol>
+                    <MDBCol size="auto" style={{ display: "flex", marginTop: 0, padding: "4px" }}>
+                      <Button variant="outline-light" style={{ display: "inline-block", marginRight: "9px" }} onClick={()=> (handleShow(),handleSubscribe())}>Подписаться</Button>
+                    </MDBCol>
+                  </>): (null):(
+                <strong>Чтобы получать все новости в нашей рассылке, зарегистрируйтесь и подпишитесь на рассылку!</strong>)}
             </MDBRow>
           </form>
         </section>
@@ -127,5 +138,6 @@ export default function Footer() {
         <p className="text-light" style={{ marginBottom: 0 }}>&copy; 2021–2023  BUYF Company, Inc. &middot; <a href="/catalog" className="text-light" style={{ textDecoration: "none" }}>  Каталог  </a>&middot; <a href="/faq" className="text-light" style={{ textDecoration: "none" }}>  FAQ  </a></p>
       </div>
     </MDBFooter>
+    </>
   )
 }
