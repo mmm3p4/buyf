@@ -1,28 +1,23 @@
-
-import React, { useState, useEffect, useCallback, useRef, useMemo} from "react";
+import React, { useState, useEffect, useRef} from "react";
 import { useParams} from "react-router-dom";
 import '../index.css';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import axios from "axios";
 import AuthService from '../services/Auth.service';
-import sale from "../img/sale.png"
-import {
-  MDBFooter,
-  MDBContainer,
-  MDBInput,
-  MDBCol,
-  MDBRow,
-  MDBBtn
-} from 'mdb-react-ui-kit';
+import {MDBCol, MDBRow} from 'mdb-react-ui-kit';
 import RightButton from "../components/RightButton";
 import LeftButton from "../components/LeftButton";
-import Alert from "../components/Alert";
+import Modal from 'react-bootstrap/Modal';
 
 function Buy() {
   const [product, setProduct] = useState({});
   const productId = useParams()
   const [hasNext, setHasNext] = useState(true);
+  const [show, setShow] = useState(false);
+  function handleShow() {
+    setShow(true);
+  }
 
   
   const nextProductIdRef = useRef(Number(productId.id) + 1);
@@ -86,29 +81,26 @@ const pastProductIdRef = useRef(Number(productId.id) - 1);
         <MDBCol style={{marginLeft: "5%"}}>
         <Card.Body>
           <Card.Title className="bukettitle">{product.name}</Card.Title>
-          {product.lastprice ? (
             <div>
               <span className="opisanie">Описание:</span><p className="desc">{product.description}</p>
               <div className="bukettitle" style={{ fontSize: "26px", display: "flex", marginTop: "1%", fontWeight: "bold"}}> Доставка от 1 ч.</div>
               <span className="new">{product.price} Р </span>
+              {product.lastprice ? (
               <span className="last">{product.lastprice} Р </span>
-              
-              <Button variant="light" className="cina1">Купить</Button>
+              ): (null)}
+              <Button variant="light" className="cina1" onClick={handleShow} >Купить</Button>
             </div>
-          ) : (
-            <div>
-              <span className="opisanie">Описание:</span><p className="desc">{product.description}</p>
-              <div className="bukettitle" style={{ fontSize: "26px", display: "flex", marginTop: "1%", fontWeight: "bold"}}> Доставка от 1 ч.</div>
-              <span className="new" >{product.price} Р </span>
-            <Button variant="light" className="cina1">Купить</Button>
-            </div>
-          )}
         </Card.Body>
         </MDBCol>
       </div>
       
       </MDBRow>
-      
+      <Modal show={show}  onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Modal body content</Modal.Body>
+      </Modal>
   </>
   )
 }

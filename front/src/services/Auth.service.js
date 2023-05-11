@@ -49,6 +49,7 @@ class AuthService {
                 activation_code
             })
     }
+    
     postSubscribed(email, subscribed) {
         return axios
             .post("http://localhost:8081/subscribing", {
@@ -68,6 +69,28 @@ class AuthService {
             password,
             newpassword
         })
+    }
+    postResetingCode(email) {
+        return axios
+            .post("http://localhost:8081/reseting", {
+                email
+            })
+    }
+    resetVerify(email, resetingCode) {
+        return axios
+            .post("http://localhost:8081/resetingverify", {
+                email,
+                resetingCode
+            })
+    }
+    
+    resetPass(email, newPassword, newPasswordRepeat) {
+        return axios
+            .put("http://localhost:8081/finishreset", {
+                email,
+                newPassword,
+                newPasswordRepeat
+            })
     }
 }
 export default new AuthService()

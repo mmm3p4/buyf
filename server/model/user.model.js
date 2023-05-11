@@ -22,7 +22,11 @@ module.exports = (sequelize, Sequelize) => {
         activation_code: {
             type: Sequelize.STRING,
             defaultValue: () => Math.floor(Math.random() * 1000000).toString().padStart(6, '0')
-          }
+          },
+        resetingCode: {
+            type: Sequelize.STRING,
+            defaultValue: null
+        }
           
           
     });

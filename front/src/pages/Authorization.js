@@ -3,6 +3,7 @@ import { Label, Form, FormGroup, Button, Input } from 'reactstrap'
 import AuthService from '../services/Auth.service';
 import '../index.css'
 import Pattern_Dark2 from '../img/Pattern_Dark2.png';
+import { Link } from "react-router-dom";
 
 
 const Authorization = () => {
@@ -70,6 +71,9 @@ const Authorization = () => {
                             invalid={passwordInvalid}
                             style={{ width: "40%", margin: "auto" }}
                         />
+                    </FormGroup>
+                    <FormGroup>
+                        <strong style={{color: "#9A1656"}}>Забыли пароль?      </strong><Link to={"/resetpass"} style={{color: "#9A1656"}}>Восстановить</Link>
                     </FormGroup>
                 </Form>
                 <Button variant="btn-light" onClick={handleFormSubmit} style={{ backgroundColor: "#F0DAE1", color: "#9A1656", display: "block", margin: "0 auto", marginBottom: "2%", border: "none" }}>Войти</Button>

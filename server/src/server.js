@@ -30,15 +30,16 @@ app.get('/product/:id', async (req, res) => {
 });
 app.get('/isproduct/:id', async (req, res) => {
   try {
-  const productId = req.params.id;
-  const product = await db.product.findByPk(productId);
+    const productId = req.params.id;
+    const product = await db.product.findByPk(productId);
 
-  if (!product) {
-    res.status(404).json({message: false});
+    if (!product) {
+      res.status(404).json({ message: false });
+    }
+    else { res.status(200).json({ message: true }) }
+  } catch (err) {
+    console.error(err.message);
   }
-  else {res.status(200).json({message: true})}
-} catch (err) {
-  console.error(err.message);}
 });
 app.get('/products', async (req, res) => {
   try {
@@ -80,7 +81,7 @@ app.get("/products/:catId", async (req, res) => {
 
 
 app.post('/product', async (req, res) => {
-  const { name, price, amount, catid,photoId, lastprice, description } = req.body;
+  const { name, price, amount, catid, photoId, lastprice, description } = req.body;
 
   try {
     const existingProduct = await db.product.findOne({ where: { name } });
@@ -89,7 +90,7 @@ app.post('/product', async (req, res) => {
       return res.status(409).send('Товар уже существует');
     }
 
-    const newProduct = await db.product.create({ name, price, amount, catid,photoId, lastprice, description });
+    const newProduct = await db.product.create({ name, price, amount, catid, photoId, lastprice, description });
 
     return res.status(201).json(newProduct);
   } catch (error) {
@@ -158,36 +159,39 @@ app.get("/admin/users", async (req, res) => {
 });
 
 app.put("/newpass", async (req, res) => {
-    try {
-      const user = await db.user.findOne({ where: { username: req.body.username } });
-      const naturalpass = await bcrypt.compare(req.body.password, user.password)
-      if (!user) {
-        return res.status(404).send('Пользователь не найден')
+  try {
+    const user = await db.user.findOne({ where: { username: req.body.username } });
+    const naturalpass = await bcrypt.compare(req.body.password, user.password)
+    if (!user) {
+      return res.status(404).send('Пользователь не найден')
+    }
+    if (req.body.newpassword === req.body.password) {
+      return res.status(500).send({ message: "Текущий пароль и новый пароль совпадают" });
+    }
+    const comparePass = () => {
+      if (!naturalpass) {
+        return false
       }
-      if (req.body.newpassword === req.body.password) {
-        return res.status(500).send({message: "Текущий пароль и новый пароль совпадают"});
-      }
-      const comparePass =  () => {
-        if (!naturalpass) {
-          return false
-        }
-        else {
-            return true
-          }
-      }  
-      if (comparePass()) { 
-        const hashpass = await bcrypt.hash(req.body.newpassword, 8)
-        db.user.update({ password: hashpass }, { where: { username: req.body.username } })
-        res.status(200).json({message: "Пароль изменен"})
-      } else { 
-        throw new Error()
+      else {
+        return true
       }
     }
-      catch (error) {
-        return res.status(500).send({message: "Текущий пароль неверный"});
-      }
-      
+    if (comparePass()) {
+      const hashpass = await bcrypt.hash(req.body.newpassword, 8)
+      db.user.update({ password: hashpass }, { where: { username: req.body.username } })
+      res.status(200).json({ message: "Пароль изменен" })
+    } else {
+      throw new Error()
+    }
+  }
+  catch (error) {
+    return res.status(500).send({ message: "Текущий пароль неверный" });
+  }
+
 })
+
+
+
 
 app.use((err, req, res, next) => {
   console.error(err);
@@ -212,39 +216,104 @@ app.post("/activation", async (req, res) => {
     }
     if (compareCode()) {
       db.user.update({ activated: true }, { where: { email: req.body.email } })
-      res.status(200).json({message: "Аккаунт активирован"})
+      res.status(200).json({ message: "Аккаунт активирован" })
     } else {
       throw new Error()
     }
   } catch (error) {
-    return res.status(500).send({message: "Неверный код"});
+    return res.status(500).send({ message: "Неверный код" });
   }
 })
-app.post("/api/user/:username/activate/:activationCode", async (req,res) => {
+app.post("/reseting", async (req, res) => {
+  try {
+    const user = await db.user.findOne({ where: { email: req.body.email } });
+    const resetingCode = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    if (!user) {
+      return res.status(404).send({ message: 'Пользователь не найден' })
+    } else {
+      await db.user.update({ resetingCode: resetingCode }, { where: { email: req.body.email } })
+      await MailService.sendResetingCode(req.body.email, resetingCode)
+      return res.status(200).json({ message: 'Код для сброса установлен и отправлен на почту' })
+    }
+  } catch (error) {
+    return res.status(500).send({ message: "Ошибка сервера" });
+  }
+})
+app.post("/resetingverify", async (req, res) => {
+  try {
+    const user = await db.user.findOne({ where: { email: req.body.email } });
+    if (!user) {
+      return res.status(404).send('Пользователь не найден')
+    }
+    if (user.resetingCode === req.body.resetingCode) {
+      return res.status(200).json({ message: "Код совпал" })
+    }
+    else {
+      throw new Error()
+    }
+
+  } catch (error) {
+    return res.status(500).send({ message: "Неверный код" });
+  }
+})
+app.put("/finishreset", async (req, res) => {
+  try {
+    const user = await db.user.findOne({ where: { email: req.body.email } });
+    const hashpass = await bcrypt.hash(req.body.newPassword, 8)
+    if (!user) {
+      return res.status(404).send({ message: 'Пользователь не найден' })
+    }
+
+    const compareNewPass = () => {
+      if (req.body.newPassword === req.body.newPasswordRepeat) {
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    if (!compareNewPass()) {
+      return res.status(400).send({ message: "Пароли не совпадают" })
+    }
+    if (compareNewPass()) {
+      await db.user.update({ password: hashpass }, { where: { email: req.body.email } })
+      await MailService.sendPasswordReset(req.body.email)
+      console.log('Письмо успешно отправлено');
+      return res.status(200).json({ message: "Пароль восстановлен" })
+    } else {
+      throw new Error()
+    }
+  }
+  catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Ошибка сервера" })
+  }
+});
+app.post("/api/user/:username/activate/:activationCode", async (req, res) => {
   try {
     const user = await db.user.findOne({ where: { username: req.params.username } });
     if (!user) {
-        return res.status(404).send('Пользователь не найден')
-      }
-      const compareCode = () => {
-        if (user.activation_code === req.params.activationCode) {
-          
-          return true
-        }
-        else {
-          return false
-        }
-      }
-      if (compareCode()) {
-        db.user.update({ activated: true }, { where: { username: req.params.username } })
-        res.send(true)
-      } else {
-        throw new Error()
-      }
-    } catch (error) {
-      return res.status(500).send('Ошибка сервера');
+      return res.status(404).send('Пользователь не найден')
     }
-  })
+    const compareCode = () => {
+      if (user.activation_code === req.params.activationCode) {
+
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    if (compareCode()) {
+      db.user.update({ activated: true }, { where: { username: req.params.username } })
+      res.send(true)
+    } else {
+      throw new Error()
+    }
+  } catch (error) {
+    return res.status(500).send('Ошибка сервера');
+  }
+})
 // MailService.sendTestMail('frantsova.s01@gmail.com')
 
 app.post("/subscribing", async (req, res) => {
@@ -264,12 +333,12 @@ app.post("/subscribing", async (req, res) => {
     }
     if (compareSubsc()) {
       db.user.update({ subscribed: true }, { where: { email: req.body.email } })
-      res.status(200).json({message: "Аккаунтподписан на рассылку"})
+      res.status(200).json({ message: "Аккаунтподписан на рассылку" })
     } else {
       throw new Error()
     }
   } catch (error) {
-    return res.status(500).send({message: "Ошибка"});
+    return res.status(500).send({ message: "Ошибка" });
   }
 })
 
@@ -280,45 +349,31 @@ app.get("/issubscribing/:email", async (req, res) => {
       return res.status(404).send('Пользователь не найден')
     }
     if (user.subscribed) {
-        return res.status(200).json({message:'подписка есть'})
+      return res.status(200).json({ message: 'подписка есть' })
     }
     else {
-        console.log("юзер не подписан")
-        return res.status(305).json({message:'подписка нет'})
-      }
+      console.log("юзер не подписан")
+      return res.status(305).json({ message: 'подписка нет' })
     }
+  }
 
-    catch (error) {
-    return res.status(500).send({message: "Ошибка"});
+  catch (error) {
+    return res.status(500).send({ message: "Ошибка" });
   }
 })
 
 app.post("/order", async (req, res) => {
   try {
     const userId = req.body.userId;
-    const productIds = req.body.productIds;
+    const productId = req.body.productId;
+    const product = await db.product.findByPk(productId);
+    const price = product.price;
 
-    // Находим все продукты по id и связываем их с заказом
-    const orderProducts = await Promise.all(productIds.map(async (productId) => {
-      const product = await db.product.findOne({ where: { id: productId } });
-      if (!product) {
-        throw new Error(`Продукт с id ${productId} не найден`);
-      }
-      return {
-        productId,
-        quantity: 1, // предполагаем, что количество товара в заказе всегда равно 1
-        price: product.price, // записываем цену товара в заказ
-      };
-    }));
-    
-    // Создаем заказ и привязываем к нему продукты
-    const order = await db.order.create({ userId, orderproducts: orderProducts }, { include: db.orderproducts });
-
-    // Высчитываем цену заказа и обновляем ее в заказе
-    const totalPrice = orderProducts.reduce((acc, product) => acc + product.price, 0);
-    await order.update({ price: totalPrice });
-
-    return res.send(order);
+    if (!product) {
+      throw new Error(`Продукт с id ${productId} не найден`);
+    }
+    const order = await db.order.create({ userId: userId, price: price, productId: productId});
+    return res.status(200).send(order)
   } catch (error) {
     console.error(error);
     return res.status(500).send({ message: "Ошибка создания заказа" });

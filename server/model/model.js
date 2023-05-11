@@ -24,12 +24,14 @@ db.user = require("./user.model.js")(sequelize, Sequelize);
 db.role = require("./role.model.js")(sequelize, Sequelize);
 db.product = require("./product.model.js")(sequelize, Sequelize);
 db.order = require("./order.model.js")(sequelize, Sequelize);
-db.orderproducts = require("./order_products.js")(sequelize, Sequelize);
 db.photo = require("./photo.model.js")(sequelize, Sequelize);
 db.session = require("./session.model.js")(sequelize, Sequelize);
 
 db.user.hasMany(db.order);
 db.order.belongsTo(db.user);
+
+db.product.hasMany(db.order);
+db.order.belongsTo(db.product);
 
 db.photo.hasOne(db.product);
 db.product.belongsTo(db.photo);
@@ -37,16 +39,7 @@ db.product.belongsTo(db.photo);
 db.user.hasOne(db.session);
 db.session.belongsTo(db.user);
 
-db.product.belongsToMany(db.order, {
-    through: "order_products",
-    foreignKey: "productId",
-    otherKey: "orderId"
-});
-db.order.belongsToMany(db.product, {
-    through: "order_products",
-    foreignKey: "orderId",
-    otherKey: "productId"
-})
+
 
 db.role.belongsToMany(db.user, {
     through: "user_roles",

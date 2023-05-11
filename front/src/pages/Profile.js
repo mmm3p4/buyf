@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AuthService from '../services/Auth.service';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import Col from 'react-bootstrap/Col';
-import Nav from 'react-bootstrap/Nav';
-import Row from 'react-bootstrap/Row';
+
 import { MDBTable, MDBCol, MDBTableHead, MDBTableBody, MDBRow } from 'mdb-react-ui-kit';
 import Button from 'react-bootstrap/Button';
 import Modalpass from '../components/ModalPass';
@@ -14,7 +10,6 @@ const Profile = () => {
 
     useEffect(() => {
         const user = AuthService.getCurrentUser();
-
         if (user) {
             setcurrentUser(user);
         }

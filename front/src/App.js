@@ -15,6 +15,7 @@ import ScrollButton from './components/ScrollButton';
 import Buy from './pages/Buy';
 import {observer} from "mobx-react-lite"
 import Alert from './components/Alert';
+import ResetPass from './pages/ResetPass';
 
 
 
@@ -34,6 +35,7 @@ function App() {
           <Route path='/auth' element={<Authorization />} />
           <Route path='/admin' element={<Admin />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/resetpass'  element={<ResetPass/>} />
         </Routes>
         <ScrollButton />  
         {window.location.pathname === '/register' && window.location.pathname === '/auth' ? null : <Footer/>}

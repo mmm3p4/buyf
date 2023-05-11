@@ -6,7 +6,6 @@ import { Button } from "reactstrap";
 
 
 
-
 const FormCode = (props) => {
     const [errors, setErrors] = useState('')
     const handleSubmit = async (email, code, username, password, subscribed) => {
