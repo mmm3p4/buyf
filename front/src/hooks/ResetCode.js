@@ -11,21 +11,18 @@ import FinishReset from "../components/FinishReset";
 const ResetCode = (props) => {
     const [errors, setErrors] = useState('')
     const [isWaitingForReseting, setIsWaitingForReseting] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
+
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordRepeat, setNewPasswordRepeat] = useState('');
     const [newPasswordInvalid, setNewPasswordInvalid] = useState(false);
     const [newPasswordRepeatInvalid, setNewPasswordRepeatInvalid] = useState(false);
-    const [userInfo, setUserInfo] = useState({});
 
-
-    const handleSubmit = async (event, email, resetingCode) => {
-        event.preventDefault();
+    const handleSubmit = async (email, resetingCode) => {
         setUserInfo({email})
         await AuthService.resetVerify(email, resetingCode)
-            .then((response) => {
-                if (response.status === 200) {
+            .then(() => {
                     setIsWaitingForReseting(true);
-                }
             })
             .catch((error) => {   
                 console.log(error.response.data.message);
@@ -84,7 +81,8 @@ const ResetCode = (props) => {
                                 <p style={{ color: 'red' }}>{errors}</p>
                             </div> : null}
                         </div>
-                        <Button type={'submit'}  onClick={async () => {
+                        <Button type={'submit'}  onClick={async (e) => {
+                            e.preventDefault()
                             isSubmitting = true
                             await handleSubmit(props.props.email, values.resetingCode)
                             setTimeout(() => resetForm(), 3000)

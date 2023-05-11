@@ -4,7 +4,7 @@ import AuthService from '../services/Auth.service';
 import '../index.css'
 import Pattern_Dark2 from '../img/Pattern_Dark2.png';
 import { Link } from "react-router-dom";
-import ResetCode from '../hooks/useReseting';
+import ResetCode from '../hooks/ResetCode';
 
 
 const ResetPass = () => {

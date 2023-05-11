@@ -243,10 +243,10 @@ app.post("/resetingverify", async (req, res) => {
   try {
     const user = await db.user.findOne({ where: { email: req.body.email } });
     if (!user) {
-      return res.status(404).send('Пользователь не найден')
+      throw new Error()
     }
     if (user.resetingCode === req.body.resetingCode) {
-      return res.status(200).json({ message: "Код совпал" })
+      return res.status(200).send({ message: "Код совпал" })
     }
     else {
       throw new Error()
@@ -259,7 +259,9 @@ app.post("/resetingverify", async (req, res) => {
 app.put("/finishreset", async (req, res) => {
   try {
     const user = await db.user.findOne({ where: { email: req.body.email } });
+    console.log(user)
     const hashpass = await bcrypt.hash(req.body.newPassword, 8)
+    console.log(hashpass)
     if (!user) {
       return res.status(404).send({ message: 'Пользователь не найден' })
     }
