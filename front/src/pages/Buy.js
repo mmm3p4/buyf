@@ -8,16 +8,15 @@ import AuthService from '../services/Auth.service';
 import {MDBCol, MDBRow} from 'mdb-react-ui-kit';
 import RightButton from "../components/RightButton";
 import LeftButton from "../components/LeftButton";
-import Modal from 'react-bootstrap/Modal';
+import ModalOrder from "../components/ModalOrder";
+
 
 function Buy() {
   const [product, setProduct] = useState({});
   const productId = useParams()
   const [hasNext, setHasNext] = useState(true);
-  const [show, setShow] = useState(false);
-  function handleShow() {
-    setShow(true);
-  }
+  const [modalShow, setModalShow] = useState(false);
+
 
   
   const nextProductIdRef = useRef(Number(productId.id) + 1);
@@ -68,8 +67,8 @@ const pastProductIdRef = useRef(Number(productId.id) - 1);
     {productId.id > 1 && <LeftButton handlePast={handlePast} />}
     {hasNext && <RightButton handleNext={handleNext} />} 
   </div>
-    <MDBRow>
-    <div id="cards1">
+    <MDBRow style={{bsGutterX: 0}}>
+    <div id="cards1" style={{bsGutterX: 0}}>
       <MDBCol style={{display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "-3%"}}>
         <img
           variant="left"
@@ -88,19 +87,14 @@ const pastProductIdRef = useRef(Number(productId.id) - 1);
               {product.lastprice ? (
               <span className="last">{product.lastprice} Р </span>
               ): (null)}
-              <Button variant="light" className="cina1" onClick={handleShow} >Купить</Button>
+              <Button variant="light" className="cina1" onClick={() => setModalShow(true)}>Купить</Button>
             </div>
         </Card.Body>
         </MDBCol>
       </div>
       
       </MDBRow>
-      <Modal show={show}  onHide={() => setShow(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Modal body content</Modal.Body>
-      </Modal>
+      <ModalOrder show={modalShow} onHide={() => setModalShow(false)} product={product}/>
   </>
   )
 }

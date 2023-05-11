@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import AuthService from "../services/Auth.service";
 import { Label, FormGroup, Button, Input } from 'reactstrap'
 import '../index.css'
-import FinishReset from "../components/FinishReset";
+import FinishReset from "./FinishReset";
 
 
 

@@ -105,12 +105,19 @@ body {
   border-radius: 63px;
   display: flex;
   padding: 2%;
+  --bs-gutter-x: 0;
 }
 
 
 #cards .buket1 {
   border-radius: 63px;
   border: 10px solid #9A1656;
+}
+.buket1 {
+  border-radius: 66px;
+  border: 6px solid #9A1656;
+  float: left;
+  width: 35%;
 }
 
 #cards1 .buket1 {
