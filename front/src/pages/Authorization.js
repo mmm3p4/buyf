@@ -4,6 +4,7 @@ import AuthService from '../services/Auth.service';
 import '../index.css'
 import Pattern_Dark2 from '../img/Pattern_Dark2.png';
 import { Link } from "react-router-dom";
+import { AlertError } from '../components/Alert';
 
 
 const Authorization = () => {
@@ -35,7 +36,7 @@ const Authorization = () => {
         await AuthService.login(username, password).then(() => {
             window.location.href = '/';
         }).catch((error) => {
-            alert(error.response.data.message);
+            AlertError(error.response.data.message);
         });
     };
 
@@ -71,6 +72,9 @@ const Authorization = () => {
                             invalid={passwordInvalid}
                             style={{ width: "40%", margin: "auto" }}
                         />
+                    </FormGroup>
+                    <FormGroup>
+                        <Link to={"http://localhost:8081/auth/vkontakte"}  style={{color: "#9A1656"}}>Войти с помощью VK</Link>
                     </FormGroup>
                     <FormGroup>
                         <strong style={{color: "#9A1656"}}>Забыли пароль?      </strong><Link to={"/resetpass"} style={{color: "#9A1656"}}>Восстановить</Link>

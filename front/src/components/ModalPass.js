@@ -3,6 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import React, { useState, useEffect } from 'react';
 import AuthService from '../services/Auth.service';
+import { AlertError, AlertSuccess } from './Alert';
 
 function Modalpass(props) {
     const [password, setPassword] = useState('');
@@ -20,18 +21,18 @@ function Modalpass(props) {
         await AuthService.updatePass(username, password, newpassword)
             .then((response) => {
                 if (response.status === 200) {
-                    alert("Пароль успешно изменен");
+                    AlertSuccess("Пароль успешно изменен");
                     AuthService.logout()
                     window.location.href = '/auth';
                 } else {
                     setPassword("");
                     setNewPassword("");
-                    alert(response.data.message);
+                    AlertError(response.data.message);
 
                 }
             })
             .catch((err) => {
-                alert(err.response.data.message)
+                AlertError(err.response.data.message)
             });
     }
 

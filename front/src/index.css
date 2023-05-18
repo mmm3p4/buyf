@@ -598,3 +598,13 @@ body {
   padding-left: 0.6%;
   opacity: 1;
 }
+.nav-tabs .nav-link {
+  background-color:  #F0DAE1 !important;
+  color: #9A1656 !important;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: #9A1656 !important;
+  color: #F0DAE1 !important;
+}
+

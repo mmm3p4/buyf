@@ -26,7 +26,7 @@ db.product = require("./product.model.js")(sequelize, Sequelize);
 db.order = require("./order.model.js")(sequelize, Sequelize);
 db.photo = require("./photo.model.js")(sequelize, Sequelize);
 db.session = require("./session.model.js")(sequelize, Sequelize);
-
+db.user_roles = require("./user_roles.js")(sequelize, Sequelize);
 db.user.hasMany(db.order);
 db.order.belongsTo(db.user);
 

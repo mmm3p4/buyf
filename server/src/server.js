@@ -8,14 +8,104 @@ const path = require("path");
 const fileUploads = require("express-fileupload");
 const MailService = require("./service/mail/mailer.service")
 var bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
+const config = require("../config/auth.config");
+const passport = require("passport");
+const VKontakteStrategy = require("passport-vkontakte").Strategy;
 
 app.use(cors({
   origin: '*'
 }));
+
 app.use(express.json());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(require("cookie-parser")());
+
 app.use("/auth", auth);
+
+app.use(
+  require("express-session")({
+    secret: "keyboard-cat",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+
+app.use(passport.session());
+
+passport.use(
+  new VKontakteStrategy(
+    {
+      clientID: "51644243",
+      clientSecret: "HykUDaGKZ5EwrWFmFb2q",
+      callbackURL: "http://localhost:8081/auth/vkontakte/callback", //где найти url на случаи успеха и неудачи
+      scope: ["email"],
+      profileFields: ['email'],
+    },
+    async function (accessToken, refreshToken, params, profile, done) {
+      try {
+        const [user, created] = await db.user.findOrCreate({
+          where: { id: profile.id }, defaults: {
+            username: profile.name.givenName,
+            
+          }
+        })
+        return done(null, profile);
+      }
+      catch (err) {
+        console.log(err);
+        return done(err)
+      }
+    }
+  )
+);
+
+passport.serializeUser(function (user, done) {
+  console.log("SERIALIZE", user);
+  done(null, JSON.stringify(user));
+});
+
+passport.deserializeUser(function (data, done) {
+  console.log("DESERIALIZE", data);
+  done(null, JSON.parse(data));
+});
+
+
+app.get("/auth/vkontakte", passport.authenticate("vkontakte"));
+
+app.get(
+  "/auth/vkontakte/callback",
+  passport.authenticate("vkontakte", {
+    successRedirect: "/vkuser", //направить после успеха
+    failureRedirect: "http://localhost:3000/auth", //направить после неудачи
+  })
+);
+
+app.get("/vkuser", async function (req, res) { //инфа о пользователе
+  try {
+
+    if (!req.user) {
+      return res.status(401).json({ error: "Не авторизован" });
+    }
+    const user = await db.user.findByPk( req.user.id);
+    if (user && !user.email && req.user.emails) {
+      user.email = req.user.emails[0].value;
+      await user.save()
+    }
+    
+    res.redirect(`http://localhost:3000/vk/${user.id}`)
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+  
+});
+
 
 //Таблица товары//
 app.get('/product/:id', async (req, res) => {
@@ -149,14 +239,95 @@ app.get("/photo/:photoId", async (req, res) => {
 })
 app.get("/admin/users", async (req, res) => {
   try {
-    const usersList = await db.user.findAll();
-    console.log('j')
+    const usersList = await db.user.findAll({
+      include: [
+        {
+          model: db.role,
+          through: {
+            model: db.user_roles,
+          },
+        },
+      ],
+      order: [["id", "ASC"]],
+    });
     res.json(usersList);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
+app.get("/users/:id", async (req, res) => {
+  try {
+    const user = await db.user.findByPk(req.params.id);
+    var token = jwt.sign({ id: user.id }, config.secret, {
+      expiresIn: 86400 // 24 часа
+  });
+    var authorities = [];
+    user.getRoles().then(roles => {
+        for (let i = 0; i < roles.length; i+2) {
+            authorities.push("ROLE_" + roles[i].name.toUpperCase());
+        }
+        res.status(200).send({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            roles: authorities,
+            accessToken: token,
+        });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+app.put("/refreshRole/:id", async(req, res, next) => {
+  try {
+      const { id } = req.params
+      let { newRole } = req.body
+      
+
+      const user = await db.user.findOne({ where: { id: id } })
+      const user_role = await db.user_roles.findOne({ where: { userId: id } })
+      if (!user) {
+          throw new Error('Пользователь не найден')
+      }
+
+      if (newRole === user_role.roleId) {
+          return res.send(`У пользователя уже роль ${user.role}`)
+      }
+      else {
+          await db.user_roles.update({ roleId: newRole }, { where: { userId: id } })
+      }
+
+      return res.send(`Роль успенне изменена на ${newRole}`)
+  
+  } catch (e) {
+      res.send(e.message)
+  }
+}
+)
+
+app.delete("/dropUser/:id", async(req, res, next) => {
+  try {
+      const { id } = req.params
+      const user = await db.user.findOne({ where: { id: id } })
+      if (user) {
+        await db.user.delete({where: {userId: id}})
+      }
+      else {
+          throw new Error()
+      }
+
+      return res.send(`Роль успенне изменена на ${newRole}`)
+  
+  } catch (e) {
+      res.send(e.message)
+  }
+}
+)
+
 
 app.put("/newpass", async (req, res) => {
   try {
@@ -217,6 +388,7 @@ app.post("/activation", async (req, res) => {
     if (compareCode()) {
       db.user.update({ activated: true }, { where: { email: req.body.email } })
       res.status(200).json({ message: "Аккаунт активирован" })
+      db.user.update({ activation_code: null }, { where: { email: req.body.email } })
     } else {
       throw new Error()
     }
@@ -280,6 +452,7 @@ app.put("/finishreset", async (req, res) => {
     if (compareNewPass()) {
       await db.user.update({ password: hashpass }, { where: { email: req.body.email } })
       await MailService.sendPasswordReset(req.body.email)
+      await db.user.update({ resetingCode: null }, { where: { email: req.body.email } })
       console.log('Письмо успешно отправлено');
       return res.status(200).json({ message: "Пароль восстановлен" })
     } else {
@@ -348,14 +521,30 @@ app.get("/issubscribing/:email", async (req, res) => {
   try {
     const user = await db.user.findOne({ where: { email: req.params.email } });
     if (!user) {
-      return res.status(404).send('Пользователь не найден')
+      return res.status(404).send('Пользователь не найден');
     }
     if (user.subscribed) {
-      return res.status(200).json({ message: 'подписка есть' })
+      return res.status(200).json({ subscribed: true });
+    } else {
+      return res.status(200).json({ subscribed: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Ошибка" });
+  }
+});
+
+app.get("/isactiveemail/:email", async (req, res) => {
+  try {
+    const user = await db.user.findOne({ where: { email: req.params.email } });
+    if (!user) {
+      return res.status(404).send('Пользователь не найден')
+    }
+    if (user.activated) {
+      return res.status(200).json({ message: 'активна' })
     }
     else {
-      console.log("юзер не подписан")
-      return res.status(305).json({ message: 'подписка нет' })
+      return res.status(404).json({ message: 'не активна' })
     }
   }
 
@@ -367,6 +556,10 @@ app.get("/issubscribing/:email", async (req, res) => {
 app.post("/order", async (req, res) => {
   try {
     const userId = req.body.userId;
+    const name = req.body.name;
+    const address = req.body.address;
+    const delivery = req.body.delivery;
+    const town = req.body.town;
     const productId = req.body.productId;
     const product = await db.product.findByPk(productId);
     const price = product.price;
@@ -374,7 +567,8 @@ app.post("/order", async (req, res) => {
     if (!product) {
       throw new Error(`Продукт с id ${productId} не найден`);
     }
-    const order = await db.order.create({ userId: userId, price: price, productId: productId});
+    const order = await db.order.create({ userId: userId, price: price, productId: productId, name: name, address: address, status: "Оформлен", delivery: delivery, town: town });
+    await db.product.update({ amount: product.amount - 1 }, { where: { id: productId } });
     return res.status(200).send(order)
   } catch (error) {
     console.error(error);
@@ -382,7 +576,21 @@ app.post("/order", async (req, res) => {
   }
 });
 
+app.get("/orders/:userId", async (req, res) => {
+  try {
+    const user = await db.user.findOne({ where: { id: req.params.userId } });
+    if (!user) {
+      return res.status(404).send('Пользователь не найден')
+    }
+    const orders = await db.order.findAll({ where: { userId: req.params.userId } });
+    return res.json(orders);
+  }
 
+  catch (error) {
+    console.error(err);
+    return res.status(500).send({ message: "Ошибка" });
+  }
+})
 
 
 app.listen(PORT, () => {

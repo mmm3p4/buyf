@@ -5,6 +5,7 @@ import '../index.css'
 import Pattern_Dark2 from '../img/Pattern_Dark2.png';
 import { Link } from "react-router-dom";
 import ResetCode from '../components/ResetCode';
+import { AlertError } from '../components/Alert';
 
 
 const ResetPass = () => {
@@ -26,7 +27,7 @@ const ResetPass = () => {
             setUserInfo({email})
             setIsWaitingForResetingCode(true)
         }).catch((error) => {
-            alert(error.response.data.message);
+            AlertError(error.response.data.message);
         });
 
     }

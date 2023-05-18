@@ -4,6 +4,7 @@ import AuthService from '../services/Auth.service';
 import '../index.css'
 import Pattern_Dark2 from '../img/Pattern_Dark2.png';
 import FormCode from '../hooks/useValidateInput';
+import { AlertError } from '../components/Alert';
 const Registration = () => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -24,26 +25,30 @@ const Registration = () => {
             if (!password) setPasswordInvalid(true);
             if (!email) setEmailInvalid(true);
             if (!username) setNameInvalid(true);
-            alert("Ошибка ввода");
+            AlertError("Заполните все поля!");
+            
         }
+        else {
 
         await AuthService.register(username, email, password, subscribed)
             .then((response) => {
                 console.log(response.data)
                 if (response.status === 200) {
                     setUserInfo({ username, email, password, subscribed })
+
                     setIsWaitingForActivationCode(true)
                 } else {
                     setName("");
                     setEmail("");
                     setPassword("");
                     setSubcribed(false);
+                    setIsWaitingForActivationCode(false)
 
                 }
             })
             .catch((err) => {
-                alert(err.response.data.message)
-            });
+                AlertError(err.response.data.message)
+            })};
     };
 
 

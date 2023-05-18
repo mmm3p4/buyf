@@ -1,33 +1,41 @@
-// import { useState } from 'react';
-// import Button from 'react-bootstrap/Button';
-// import Modal from 'react-bootstrap/Modal';
+import React from 'react';
 
-// function Alert({show}) {
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-//   return (
-//     <>
-//       <Modal
-//         show={show}
-//         onHide={handleClose}
-//         backdrop="static"
-//         keyboard={false}
-//       >
-//         <Modal.Header closeButton>
-//           <Modal.Title>Modal title</Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body>
-//           I will not close if you click outside me. Don not even try to press
-//           escape key.
-//         </Modal.Body>
-//         <Modal.Footer>
-//           <Button variant="secondary" onClick={handleClose}>
-//             Close
-//           </Button>
-//           <Button variant="primary">Understood</Button>
-//         </Modal.Footer>
-//       </Modal>
-//     </>
-//   );
-// }
-
-// export default Alert;
+export const AlertSuccess = (message) => {
+    toast.success(message, {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+};
+export const AlertError = (message) => {
+    toast.error(message, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+}
+export const AlertInfo = (message) => {
+    toast.info(message, {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+}

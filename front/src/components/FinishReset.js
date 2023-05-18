@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import AuthService from "../services/Auth.service";
 import {Label, FormGroup, Button, Input} from 'reactstrap'
 import '../index.css'
+import { AlertError } from "./Alert";
 
 
 const FinishReset = (props) => {
@@ -31,7 +32,7 @@ const FinishReset = (props) => {
             console.log("Успешно закончено!");
             window.location.href = "/auth"
         }).catch((error) => {
-            alert(error.response.data.message);
+            AlertError(error.response.data.message);
         });
 
     }

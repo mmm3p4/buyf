@@ -1,7 +1,7 @@
 import './App.css';
 import Firstpage from './pages/firstpage';
 import Pattern from './img/Pattern.png';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
 import Catalog from './pages/catalog';
 import Shapka from './components/Shapka';
 import Footer from './components/Footer';
@@ -16,11 +16,16 @@ import Buy from './pages/Buy';
 import {observer} from "mobx-react-lite"
 import Alert from './components/Alert';
 import ResetPass from './pages/ResetPass';
+import { useEffect } from 'react';
+import AuthService from './services/Auth.service';
+import Empty from './pages/Empty';
+import { ToastContainer } from 'react-toastify';
 
 
 
 
 function App() {
+
   return (
     <div style={{ backgroundImage: `url(${Pattern})` }}>
       <Router>
@@ -28,6 +33,7 @@ function App() {
         <Routes>
           <Route path='/users' element={<UserList />} />
           <Route path='/' element={<Firstpage />} />
+          <Route path='/vk/:id' element={<Empty />} />
           <Route path='/catalog' element={<Catalog />} />
           <Route path='/faq' element={<Faq />} />
           <Route path='/product/:id' element={<Buy />} />
@@ -38,6 +44,7 @@ function App() {
           <Route path='/resetpass'  element={<ResetPass/>} />
         </Routes>
         <ScrollButton />  
+        <ToastContainer />
         {window.location.pathname === '/register' && window.location.pathname === '/auth' ? null : <Footer/>}
       </Router>
     </div>

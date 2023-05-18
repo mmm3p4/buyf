@@ -15,6 +15,17 @@ class AuthService {
                 return response.data;
             });
     }
+    loginVK(id) {
+        return axios
+            .get(`http://localhost:8081/users/${id}`)
+            .then(response => {
+
+                    localStorage.setItem("user",
+                        JSON.stringify(response.data));
+
+                return response.data;
+            });
+    }
     logout() {
         localStorage.removeItem("user");
     }
@@ -27,7 +38,10 @@ class AuthService {
                 roles: ['user']
             });
     }
-    
+    getVKUser() {
+        return axios.get("http://localhost:8081/auth/vkontakte");
+    }
+
     getCurrentUser() {
         return JSON.parse(localStorage.getItem('user'));;
     }
@@ -58,8 +72,11 @@ class AuthService {
             })
     }
     isSubscribed(email) {
-        return axios.get(`http://localhost:8081/issubscribing/${email}`, { params: { email } })
-      }
+        return axios.get(`http://localhost:8081/issubscribing/${email}`)
+    }
+    isActiveEmail(email) {
+        return axios.get(`http://localhost:8081/isactiveemail/${email}`)
+    }
     getProductById(id) {
         return axios.get(`http://localhost:8081/isproduct/${id}`,  { params: { id } });
     }
@@ -91,6 +108,23 @@ class AuthService {
                 newPassword,
                 newPasswordRepeat
             })
+    }
+    createOrder(userId, productId, name, address, town, delivery) {
+        return axios
+            .post("http://localhost:8081/order", {
+                userId,
+                productId,
+                name,
+                address,
+                town,
+                delivery
+        })
+    }
+    getOrders(userId) {  
+        return axios.get(`http://localhost:8081/orders/${userId}`, { params: { userId } })
+    }
+    refreshRole(userId, newRole) {
+        return axios.put(`http://localhost:8081/refreshrole/${userId}`, { newRole })
     }
 }
 export default new AuthService()

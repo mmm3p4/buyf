@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import UserList from './UserList';
+import '../index.css'
 
 
 const Admin = () => {
@@ -23,27 +24,27 @@ const Admin = () => {
   }, []);
   if (currentUser && currentUser.roles.includes("ROLE_ADMIN")) {
     return (
+      <>
+      <h1 style={{textAlign: "center", marginTop: "5%", color: "#9A1656"}}>Панель администратора</h1>
       <Tabs
         defaultActiveKey="profile"
         id="justify-tab-example"
         className="mb-3"
         justify
-        style={{ margin: "10%", textColor: "danger" }}
+        style={{ margin: "5%" }}
       >
-        <Tab eventKey="profile" title="Пользователи" style={{ color: "#9A1656" }}>
+        <Tab eventKey="profile" className="custom-tab" title="Пользователи" style={{ color: "#9A1656 !important;" }}>
           <UserList />
         </Tab>
-        <Tab eventKey="2" title="2" color="danger" style={{ margin: "10%" }}>
+        <Tab eventKey="2" title="Товары" color="danger" style={{ margin: "10%" }}>
           Tab content for Profile
         </Tab>
-        <Tab eventKey="3" title="3" style={{ color: "#9A1565", margin: "10%" }}>
+        <Tab eventKey="3" title="Заказы" style={{ color: "#9A1565", margin: "10%" }}>
           Tab content for Loooonger Tab
         </Tab>
-        <Tab eventKey="4" title="4" style={{ color: "#9A1565", margin: "10%" }}>
-          Tab content for Contact
-        </Tab>
+    
       </Tabs>
-    )
+    </>)
   };
 };
 

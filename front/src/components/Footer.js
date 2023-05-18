@@ -11,24 +11,23 @@ import '../index.css';
 import Button from 'react-bootstrap/Button';
 import { useState, useEffect } from 'react'
 import AuthService from '../services/Auth.service';
-import validator from 'validator';
-import Modal from 'react-bootstrap/Modal'; 
+import {observer} from "mobx-react-lite"
+import { AlertError, AlertSuccess } from './Alert';
 
-export default function Footer() {
+const Footer = () => {
   const [isSubscribe, setIsSubscribe] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
-  const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   useEffect(() => {
     if (user) {
       AuthService.isSubscribed(user.email)
         .then((response) => {
-          if (response.status === 200)
+          if (response.status === 200 && response.data.subscribed === true) {
             setIsSubscribe(true);
-          else setIsSubscribe(false);
+          } else {
+            setIsSubscribe(false);
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -37,31 +36,20 @@ export default function Footer() {
   }, []);
 
 
+
   const handleSubscribe = async () => {
     try {
-      await AuthService.postSubscribed(user.email, true);
-      return <>
-      <Modal
-        show={show}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          I will not close if you click outside me. Don not even try to press
-          escape key.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary">Understood</Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+      await AuthService.postSubscribed(user.email, true).then((response) => {
+        if (response.status === 200) {
+        AlertSuccess("Вы успешно подписались на рассылку")
+        
+        }
+        else{
+          AlertError("Произошла ошибка при подписке на рассылку")
+        }
+      })
+
+      
     } catch (error) {
       console.error("Error subscribing:", error);
     }
@@ -69,7 +57,6 @@ export default function Footer() {
 
   return (
     <>
-    
     <MDBFooter className='text-center' color='white' style={{ backgroundColor: "#9A1656", boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)" }}>
       <MDBContainer className='p-1'>
         
@@ -86,7 +73,7 @@ export default function Footer() {
                       </p>
                     </MDBCol>
                     <MDBCol size="auto" style={{ display: "flex", marginTop: 0, padding: "4px" }}>
-                      <Button variant="outline-light" style={{ display: "inline-block", marginRight: "9px" }} onClick={()=> (handleShow(),handleSubscribe())}>Подписаться</Button>
+                      <Button variant="outline-light" style={{ display: "inline-block", marginRight: "9px" }} onClick={() => handleSubscribe()}>Подписаться</Button>
                     </MDBCol>
                   </>): (null):(
                 <strong>Чтобы получать все новости в нашей рассылке, зарегистрируйтесь и подпишитесь на рассылку!</strong>)}
@@ -141,3 +128,4 @@ export default function Footer() {
     </>
   )
 }
+export default observer(Footer);

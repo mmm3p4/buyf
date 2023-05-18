@@ -44,8 +44,9 @@ exports.signin = (req, res) => {
     })
         .then(user => {
             if (!user) {
-                return res.status(404).send({ message: "User Not found." });
+                return res.status(404).send({ message: "Пользователь не найден" });
             }
+            if (user.activated === false) {return res.status(401).send({ message: "Пользователь не активирован" })}
             var passwordIsValid = bcrypt.compareSync(
                 req.body.password,
                 user.password
@@ -53,7 +54,7 @@ exports.signin = (req, res) => {
             if (!passwordIsValid) {
                 return res.status(401).send({
                     accessToken: null,
-                    message: "Invalid Password!"
+                    message: "Неправильный логин или пароль"
                 });
             }
             var token = jwt.sign({ id: user.id }, config.secret, {
